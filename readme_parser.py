@@ -3,14 +3,29 @@ class ReadMe:
 	def __init__(self,file_path, destination = None):
 		self.file_obj = None
 		self.html_string = None
-		self.tags_map = {
+		self.block_tags_map = {
 			"#":"h1",
 			"##":"h2",
 			"###":"h3",
+			"####":"h4",
+			"#####":"h5",
 			"*":"li",
-			"*word*":"i",
-			"**word**":"b"
+			"-":"li",
+			"+":"li",
+			"```":"code",
+			">":"blockquote"
 		}
+		self.inline_tags_map = {
+			"_":"i",
+			"__":"b",
+			"*":"i",
+			"**":"b",
+			"~~":"s",
+			"[]":"a",
+			"![]":"img",
+		}
+
+		self.inline_tag_maps_list = ["\*.*?\*","\*\*.*?\*\*","_.*?_","__.*?__"]
 		self.placeholder_patterns = ('#','*')
 		self.placeholders = ('#+','\*')
 		self.placeholders_re = '|'.join(self.placeholders)
@@ -35,7 +50,8 @@ class ReadMe:
 		
 		line_number = 0
 		while line_number < len(self.file_lines):
-			match = re.match(self.placeholders_re,self.file_lines[line_number])
+			regex_matcher = re.compile(self.placeholders_re)
+			match = regex_matcher.match(self.file_lines[line_number])
 			holder = {}
 			if self.file_lines[line_number].startswith(self.placeholder_patterns) and match is not None:
 				placeholder = self.file_lines[line_number][match.start():match.end()]
